@@ -40,7 +40,7 @@ function pauseTimer(){
 function resetTimer(){
     clearInterval(countdown);
     isRunning = false;
-    timeLeft = 25*60;
+    timeleft = 25*60;
     updateDisplay();
 }
 
