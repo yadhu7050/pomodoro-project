@@ -1,11 +1,39 @@
 const timerDisplay = document.getElementById('timer');
+const timerTitle = document.getElementById('timerTitle');
 const startButton = document.getElementById('start');
 const pauseButton = document.getElementById('pause');
 const resetButton = document.getElementById('reset');
+const fallingWrapper = document.querySelector('.falling-wrapper');
 
 let countdown;
-let timeleft = 25*60;
+let timeleft = 25 * 60;
 let isRunning = false;
+let isBreakMode = false;
+let stickerInterval;
+
+const workStickers = ['🍅', '⏱️', '🎯', '💪'];
+const breakStickers = ['☕', '🌸', '🌿', '✨'];
+
+function createSticker() {
+    const sticker = document.createElement('div');
+    sticker.classList.add('sticker');
+    const stickers = isBreakMode ? breakStickers : workStickers;
+    sticker.innerText = stickers[Math.floor(Math.random() * stickers.length)];
+    sticker.style.left = Math.random() * 100 + 'vw';
+    sticker.style.animationDuration = (3 + Math.random() * 3) + 's';
+    sticker.style.fontSize = (20 + Math.random() * 20) + 'px';
+    sticker.style.filter = `blur(${Math.random() * 1}px)`;
+    fallingWrapper.appendChild(sticker);
+    setTimeout(() => sticker.remove(), 5000);
+}
+
+function startStickerAnimation() {
+    stickerInterval = setInterval(createSticker, 800);
+}
+
+function stopStickerAnimation() {
+    clearInterval(stickerInterval);
+}
 
 function formatTime(seconds){
     const mins = Math.floor(seconds/60);
@@ -14,49 +42,78 @@ function formatTime(seconds){
 }
 
 function updateDisplay(){
-    timerDisplay.textContent=formatTime(timeleft);
+    timerDisplay.textContent = formatTime(timeleft);
+    document.body.className = isBreakMode ? 'break-mode' : 'work-mode';
+    timerTitle.textContent = isBreakMode ? 'Break Timer' : 'Pomodoro Timer';
 }
 
 function startTimer(){
     if(isRunning) return;
-    isRunning=true;
+    isRunning = true;
+    startStickerAnimation();
     countdown = setInterval(() => {
-        timeleft--;
-        updateDisplay();
-
         if(timeleft <= 0){
             clearInterval(countdown);
-            playSound();
-            switchToBreak();
+            isRunning = false;
+            stopStickerAnimation();
+            if(isBreakMode){
+                playBreakDoneSound();
+                switchToWork();
+            } else {
+                playSound();
+                switchToBreak();
+            }
+            return;
         }
-    },1000);
+        timeleft--;
+        updateDisplay();
+    }, 1000);
 }
 
 function pauseTimer(){
     clearInterval(countdown);
+    stopStickerAnimation();
     isRunning = false;
 }
 
 function resetTimer(){
     clearInterval(countdown);
+    stopStickerAnimation();
     isRunning = false;
-    timeleft = 25*60;
+    isBreakMode = false;
+    timeleft = 25 * 60;
     updateDisplay();
 }
 
 function switchToBreak(){
-    alert("Time's up! Take a 5 min break.");
-    timeLeft = 5*60;
+    isBreakMode = true;
+    timeleft = 5 * 60;
     updateDisplay();
+    setTimeout(() => {
+        alert("Time's up! Take a 5 minute break.");
+    }, 100);
+}
+
+function switchToWork(){
+    isBreakMode = false;
+    timeleft = 25 * 60;
+    updateDisplay();
+    setTimeout(() => {
+        alert("Break's over! Time to work.");
+    }, 100);
 }
 
 function playSound(){
-    const audio = new Audio('assets/beep.mp3')
-    audio.play();
+    const audio = new Audio('assets/beep.mp3');
+    audio.play().catch(e => console.log('Audio play failed:', e));
 }
 
-startButton.addEventListener('click',startTimer);
-pauseButton.addEventListener('click',pauseTimer);
-resetButton.addEventListener('click',resetTimer);
+function playBreakDoneSound(){
+    const audio = new Audio('assets/breakdone.mp3');
+    audio.play().catch(e => console.log('Audio play failed:', e));
+}
 
 updateDisplay();
+startButton.addEventListener('click', startTimer);
+pauseButton.addEventListener('click', pauseTimer);
+resetButton.addEventListener('click', resetTimer);
