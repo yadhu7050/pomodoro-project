@@ -10,9 +10,22 @@ let timeleft = 25 * 60;
 let isRunning = false;
 let isBreakMode = false;
 let stickerInterval;
+let backgroundAudio = new Audio('assets/background.mp3');
+backgroundAudio.loop = true;
 
-const workStickers = ['🍅', '⏱️', '🎯', '💪'];
-const breakStickers = ['☕', '🌸', '🌿', '✨'];
+const workStickers = [
+    '🍅', '⏱️', '🎯', '💪',
+    '📖', '🖥️', '📚', '📝',
+    '⚙️', '📊', '🎧', '🧠',
+    '📅', '💡', '🔴', '🚀'
+  ];
+  const breakStickers = [
+    '☕', '🌸', '🌿', '✨',
+    '🍃', '🛋️', '📱', '🎶',
+    '💆', '🕊️', '🍵', '🎨',
+    '🌼', '🧘', '🎉', '🌈'
+  ];
+  
 
 function createSticker() {
     const sticker = document.createElement('div');
@@ -28,7 +41,7 @@ function createSticker() {
 }
 
 function startStickerAnimation() {
-    stickerInterval = setInterval(createSticker, 800);
+    stickerInterval = setInterval(createSticker, 200);
 }
 
 function stopStickerAnimation() {
@@ -51,6 +64,9 @@ function startTimer(){
     if(isRunning) return;
     isRunning = true;
     startStickerAnimation();
+    if (!isBreakMode) {
+        backgroundAudio.play().catch(e => console.log('Audio play failed:', e));
+    }
     countdown = setInterval(() => {
         if(timeleft <= 0){
             clearInterval(countdown);
@@ -60,6 +76,8 @@ function startTimer(){
                 playBreakDoneSound();
                 switchToWork();
             } else {
+                backgroundAudio.pause();
+                backgroundAudio.currentTime = 0;
                 playSound();
                 switchToBreak();
             }
@@ -74,6 +92,9 @@ function pauseTimer(){
     clearInterval(countdown);
     stopStickerAnimation();
     isRunning = false;
+    if (!isBreakMode) {
+        backgroundAudio.pause();
+    }
 }
 
 function resetTimer(){
@@ -81,7 +102,9 @@ function resetTimer(){
     stopStickerAnimation();
     isRunning = false;
     isBreakMode = false;
-    timeleft = 25 * 60;
+    timeleft = 10;
+    backgroundAudio.pause();
+    backgroundAudio.currentTime = 0;
     updateDisplay();
 }
 
@@ -96,7 +119,7 @@ function switchToBreak(){
 
 function switchToWork(){
     isBreakMode = false;
-    timeleft = 25 * 60;
+    timeleft = 10;
     updateDisplay();
     setTimeout(() => {
         alert("Break's over! Time to work.");
