@@ -102,7 +102,7 @@ function resetTimer(){
     stopStickerAnimation();
     isRunning = false;
     isBreakMode = false;
-    timeleft = 10;
+    timeleft = 25 * 60;
     backgroundAudio.pause();
     backgroundAudio.currentTime = 0;
     updateDisplay();
@@ -119,7 +119,7 @@ function switchToBreak(){
 
 function switchToWork(){
     isBreakMode = false;
-    timeleft = 10;
+    timeleft = 25 * 60;
     updateDisplay();
     setTimeout(() => {
         alert("Break's over! Time to work.");
