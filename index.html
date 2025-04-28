@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body class="work-mode">
-    <div class="falling-wrapper"></div>
-    <div class="container">
-        <h1 id="timerTitle">Pomodoro Timer</h1>
+  <div class="falling-wrapper"></div>
+  <div class="container">
+    <h1 id="timerTitle">Pomodoro Timer</h1>
 
-        <div class="timer" id="timer">25:00</div>
+    <div class="timer" id="timer">25:00</div>
 
-        <div class="controls">
-            <button id="start" class="btn">Start</button>
-            <button id="pause" class="btn">Pause</button>
-            <button id="reset" class="btn">Reset</button>
-        </div>
+    <div class="time-settings">
+      <div class="time-control">
+        <span>🖥️</span>
+        <button class="btn mini" id="workMinus">-</button>
+        <span id="workDuration">25</span>
+        <button class="btn mini" id="workPlus">+</button>
+      </div>
+      <div class="time-control">
+        <span>☕</span>
+        <button class="btn mini" id="breakMinus">-</button>
+        <span id="breakDuration">5</span>
+        <button class="btn mini" id="breakPlus">+</button>
+      </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <div class="controls">
+      <button id="start" class="btn">Start</button>
+      <button id="pause" class="btn">Pause</button>
+      <button id="reset" class="btn">Reset</button>
+      <button id="musicToggle" class="btn">🔊</button>
+    </div>
+
+    <div id="logContainer" class="log"></div>
+  </div>
+  <script src="js/script.js"></script>
 </body>
 </html>
