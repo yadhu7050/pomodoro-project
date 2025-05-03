@@ -177,4 +177,56 @@
     background-color: #62B6CB;
     color: #107C7C;
   }
+  #spotifyControls button {
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  
+  body.work-mode #spotifyControls button {
+    background-color: #A0142E;
+    color: #FFE6D8;
+    border-color: #FF8C42;
+  }
+  
+  body.work-mode #spotifyControls button:hover {
+    background-color: #FF8C42;
+    color: #A0142E;
+  }
+  
+  body.break-mode #spotifyControls button {
+    background-color: #107C7C;
+    color: #DFF6F0;
+    border-color: #62B6CB;
+  }
+  
+  body.break-mode #spotifyControls button:hover {
+    background-color: #62B6CB;
+    color: #107C7C;
+  }
+  
+  body.work-mode #removePlaylist {
+    background-color: rgba(215, 38, 56, 0.85);
+    color: #FFE6D8;
+    border-color: #FF8C42;
+  }
+  
+  body.work-mode #removePlaylist:hover {
+    background-color: #FF8C42;
+    color: #A0142E;
+  }
+  
+  body.break-mode #removePlaylist {
+    background-color: rgba(14, 124, 123, 0.85);
+    color: #DFF6F0;
+    border-color: #62B6CB;
+  }
+  
+  body.break-mode #removePlaylist:hover {
+    background-color: #62B6CB;
+    color: #107C7C;
+  }
   

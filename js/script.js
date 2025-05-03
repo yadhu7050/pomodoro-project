@@ -19,8 +19,39 @@ let isBreakMode = false;
 let musicEnabled = true;
 let stickerInterval;
 let timeleft = 25 * 60;
+let spotifyActive = false;
 let backgroundAudio = new Audio('assets/background.mp3');
 backgroundAudio.loop = true;
+
+const addPlaylistBtn = document.getElementById('addPlaylist');
+const removePlaylistBtn = document.getElementById('removePlaylist');
+const spotifyPlayerWrapper = document.getElementById('spotifyPlayerWrapper');
+
+addPlaylistBtn.addEventListener('click', () => {
+  const url = prompt("Paste your Spotify playlist link:");
+  if (url && url.includes('open.spotify.com/playlist/')) {
+    const playlistId = url.split('playlist/')[1].split('?')[0];
+    const iframe = `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+    spotifyPlayerWrapper.innerHTML = iframe;
+    spotifyPlayerWrapper.style.display = 'block';
+    removePlaylistBtn.style.display = 'inline-block';
+    backgroundAudio.pause();
+    spotifyActive = true;
+  } else {
+    alert("Invalid playlist link.");
+  }
+});
+
+removePlaylistBtn.addEventListener('click', () => {
+  spotifyPlayerWrapper.innerHTML = '';
+  spotifyPlayerWrapper.style.display = 'none';
+  removePlaylistBtn.style.display = 'none';
+  spotifyActive = false;
+  if (musicEnabled && !isBreakMode && isRunning) {
+    backgroundAudio.play().catch(() => {});
+  }
+});
+
 
 const workStickers = ['🍅', '⏱️', '🎯', '💪', '📖', '🖥️', '📚', '📝', '⚙️', '📊', '🎧', '🧠', '📅', '💡', '🔴', '🚀'];
 const breakStickers = ['☕', '🌸', '🌿', '✨', '🍃', '🛋️', '📱', '🎶', '💆', '🕊️', '🍵', '🎨', '🌼', '🧘', '🎉', '🌈'];
@@ -71,7 +102,8 @@ function startTimer() {
   isRunning = true;
   timeleft = (isBreakMode ? getBreakTime() : getWorkTime()) * 60;
   startStickerAnimation();
-  if (!isBreakMode && musicEnabled) backgroundAudio.play().catch(() => {});
+  if (!isBreakMode && musicEnabled && !spotifyActive) backgroundAudio.play().catch(() => {});
+
   countdown = setInterval(() => {
     if (timeleft <= 0) {
       clearInterval(countdown);
@@ -79,21 +111,20 @@ function startTimer() {
       stopStickerAnimation();
       if (isBreakMode) {
         playBreakDoneSound();
-        //logSession('Break Done');
         setTimeout(() => {
-            alert("Break's over! Back to work.");
-            switchToWork();
-          }, 50);
+          alert("Break’s over! Back to work.");
+          switchToWork();
+        }, 50);
       } else {
         backgroundAudio.pause();
         backgroundAudio.currentTime = 0;
         playSound();
+        handleSessionComplete();
         setTimeout(() => {
           alert("Time's up! Take a break.");
           switchToBreak();
         }, 50);
-        handleSessionComplete();
-      }
+      }      
       return;
     }
     timeleft--;
@@ -162,9 +193,9 @@ function updateLog() {
   logs.push(`🎯 Focus sessions today: ${data.dailyCount || 0}`);
   logs.push(`🔥 Current streak: ${data.streak || 0} day${data.streak === 1 ? '' : 's'}`);
   const total = data.totalSessions || 0;
-  if (total >= 50) logs.push(`🏆 Focus Pro!`);
-  else if (total >= 25) logs.push(`🥈 Consistency Hero!`);
-  else if (total >= 10) logs.push(`🏅 Newbie No More!`);
+  if (total >= 15) logs.push(`🏆 Focus Pro!`);
+  else if (total >= 10) logs.push(`🥈 Consistency Hero!`);
+  else if (total >= 5) logs.push(`🏅 Newbie No More!`);
   logContainer.innerHTML = logs.map(l => `<div>${l}</div>`).join('');
 }
 
@@ -177,7 +208,7 @@ function getYesterday() {
 musicToggle.addEventListener('click', () => {
   musicEnabled = !musicEnabled;
   musicToggle.textContent = musicEnabled ? '🔊' : '🔇';
-  if (musicEnabled && isRunning && !isBreakMode) backgroundAudio.play().catch(() => {});
+  if (musicEnabled && isRunning && !isBreakMode && !spotifyActive) backgroundAudio.play().catch(() => {});
   if (!musicEnabled) backgroundAudio.pause();
 });
 
